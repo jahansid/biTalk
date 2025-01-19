@@ -5,17 +5,15 @@ import { generateToken } from "../lib/utils.js";
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
 
-
   try {
     if (!fullName || !email || !password) {
-      res.status(400).json({message: "All field to be filled"})
+      res.status(400).json({ message: "All field to be filled" });
     }
     if (password.length < 6) {
       return res
         .status(400)
         .json({ message: "Password must be atleast 6 characters" });
     }
-
 
     //check if the user already exists
     const user = await User.findOne({ email });
@@ -52,8 +50,33 @@ export const signup = async (req, res) => {
   }
 };
 
-export const login = (req, res) => {
-  res.send("login route");
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    //check if the user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Invalid email or password" });
+    }
+
+    //validating password comparing with saved password
+    const isPassword = await bcrypt.compare(password, user.password);
+    if (!isPassword) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    //generate and send the token
+    generateToken(user._id, res);
+    res.status(201).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    console.error("Error in login controller:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 export const logout = (req, res) => {
