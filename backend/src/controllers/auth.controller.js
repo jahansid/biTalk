@@ -8,7 +8,7 @@ export const signup = async (req, res) => {
 
   try {
     if (!fullName || !email || !password) {
-      res.status(400).json({ message: "All field to be filled" });
+      return res.status(400).json({ message: "All field to be filled" });
     }
     if (password.length < 6) {
       return res
@@ -92,13 +92,13 @@ export const logout = (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { profilePicture } = user.body;
+    const { profilePicture } = req.body;
     const userId = req.user._id;
     if (!profilePicture) {
       return res.status(400).json({ message: "Profile picture is required" });
     }
     //uploading on cloudinary
-    const uploadResponse = cloudinary.uploader.upload(profilePicture);
+    const uploadResponse = await cloudinary.uploader.upload(profilePicture);
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profilePicture: uploadResponse.secure_url },
