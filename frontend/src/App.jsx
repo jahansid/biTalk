@@ -4,7 +4,7 @@ import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
-import { useAuthstore } from "./components/store/useAuthstore";
+import { useAuthstore } from "./store/useAuthstore.js";
 import { useEffect } from "react";
 import { LoaderCircle } from "lucide-react";
 import ProfilePage from "./pages/ProfilePage";
